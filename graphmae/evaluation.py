@@ -49,7 +49,7 @@ def linear_probing_for_transductive_node_classiifcation(model, graph, feat, opti
 
     for epoch in epoch_iter:
         model.train()
-        out = model(graph, x)
+        out = model(x, graph.edge_index)
         loss = criterion(out[train_mask], labels[train_mask])
         optimizer.zero_grad()
         loss.backward()
@@ -58,7 +58,7 @@ def linear_probing_for_transductive_node_classiifcation(model, graph, feat, opti
 
         with torch.no_grad():
             model.eval()
-            pred = model(graph, x)
+            pred = model(x, graph.edge_index)
             val_acc = accuracy(pred[val_mask], labels[val_mask])
             val_loss = criterion(pred[val_mask], labels[val_mask])
             test_acc = accuracy(pred[test_mask], labels[test_mask])
@@ -74,7 +74,7 @@ def linear_probing_for_transductive_node_classiifcation(model, graph, feat, opti
 
     best_model.eval()
     with torch.no_grad():
-        pred = best_model(graph, x)
+        pred = best_model(x, graph.edge_index)
         estp_test_acc = accuracy(pred[test_mask], labels[test_mask])
     if mute:
         print(f"# IGNORE: --- TestAcc: {test_acc:.4f}, early-stopping-TestAcc: {estp_test_acc:.4f}, Best ValAcc: {best_val_acc:.4f} in epoch {best_val_epoch} --- ")
